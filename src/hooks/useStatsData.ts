@@ -1,7 +1,9 @@
+import axios from "axios";
 import useAxios from "./useAxios";
 export default async function useStatsData() {
     return new Promise((resolve, reject) => {
-        useAxios()
+        const instance = axios.create({ baseURL: process.env.NEXT_PUBLIC_API_URL });
+        instance
             .get("/sensors/stats")
             .then(({ data }) => {
                 const values: number[] = [data.electric, data.condition, data.event];

@@ -3,7 +3,8 @@ import { ChartData } from "chart.js";
 import useAxios from "./useAxios";
 export default async function useSensorsData() {
     return new Promise((resolve, reject) => {
-        useAxios()
+        const instance = axios.create({ baseURL: process.env.NEXT_PUBLIC_API_URL });
+        instance
             .get("/sensors")
             .then(({ data }) => {
                 const values: number[] = [0, 0, 0];

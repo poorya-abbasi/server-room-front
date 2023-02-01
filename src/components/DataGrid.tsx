@@ -36,6 +36,7 @@ export default function DataGrid({ columns, data, mutators, actions }: Props) {
                                     <tr>
                                         {columns.map((column) => (
                                             <th
+                                                key={"header-" + column.key}
                                                 scope="col"
                                                 className="py-3.5 pl-4 pr-3 text-right text-sm font-semibold text-gray-900 sm:pl-6"
                                             >
@@ -57,7 +58,10 @@ export default function DataGrid({ columns, data, mutators, actions }: Props) {
                                             className={index % 2 === 0 ? undefined : "bg-gray-50"}
                                         >
                                             {columns.map((column) => (
-                                                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                                <td
+                                                    key={item.id + " " + column.key}
+                                                    className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                                                >
                                                     {mutators && mutators[column.key]
                                                         ? mutators[column.key](item[column.key])
                                                         : item[column.key]}
@@ -68,6 +72,7 @@ export default function DataGrid({ columns, data, mutators, actions }: Props) {
                                                 {actions &&
                                                     actions.map((action) => (
                                                         <a
+                                                            key={action.title}
                                                             href={replaceDynamicParams(
                                                                 action.href,
                                                                 index

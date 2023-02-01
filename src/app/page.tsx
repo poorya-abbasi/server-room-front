@@ -14,15 +14,14 @@ export default function Home() {
     const [sensorsData, setSensorsData] = useState<any>();
     const [stats, setStats] = useState<any>();
     const [statsChartData, setStatsChartData] = useState<any>();
+    const requests = [useSensorsData(), useStatsData()];
 
     useEffect(() => {
-        useSensorsData().then((res: any) => {
-            setSensorsData(res.raw);
-            setSensorsChartData(res.chart);
-        });
-        useStatsData().then((res: any) => {
-            setStats(res.raw);
-            setStatsChartData(res.chart);
+        Promise.all(requests).then((res: Array<any>) => {
+            setSensorsData(res[0].raw);
+            setSensorsChartData(res[0].chart);
+            setStats(res[1].raw);
+            setStatsChartData(res[1].chart);
         });
     }, []);
     return (
