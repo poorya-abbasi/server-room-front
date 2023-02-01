@@ -23,44 +23,43 @@ export default function EditSensor({ params }: any) {
     const [sensorType, setSensorType] = useState<string>();
     const [sensorName, setSensorName] = useState<string>();
     const [loading, setLoading] = useState(true);
+    const instance = useAxios();
     const router = useRouter();
     useEffect(() => {
-        useAxios()
-            .get(`/sensors/${params.id}`)
-            .then((res) => {
-                const sensor = res.data;
-                setSensorType(sensor.type);
-                setSensorName(sensor.name);
-                let metrics = [];
-                switch (sensor.type) {
-                    case "electric":
-                        metrics = sensor.ElecMetrics;
-                        break;
-                    case "condition":
-                        metrics = sensor.ConditonMetrics;
-                        break;
-                    case "event":
-                        metrics = sensor.Events;
-                        break;
-                }
-                setSensor({
-                    labels: metrics.map((metric: any) =>
-                        dayjs(metric.createdAt).locale("fa").format("YYYY/MM/DD HH:mm:ss")
-                    ),
-                    datasets: [
-                        {
-                            label: "مقدار گزارش شده",
-                            data: metrics.map((metric: any) => metric.value),
-                            borderColor: "#333",
-                            backgroundColor: "#333",
-                            tension: 0.3,
-                            borderDash: [3],
-                        },
-                    ],
-                });
-
-                setLoading(false);
+        instance.get(`/sensors/${params.id}`).then((res) => {
+            const sensor = res.data;
+            setSensorType(sensor.type);
+            setSensorName(sensor.name);
+            let metrics = [];
+            switch (sensor.type) {
+                case "electric":
+                    metrics = sensor.ElecMetrics;
+                    break;
+                case "condition":
+                    metrics = sensor.ConditonMetrics;
+                    break;
+                case "event":
+                    metrics = sensor.Events;
+                    break;
+            }
+            setSensor({
+                labels: metrics.map((metric: any) =>
+                    dayjs(metric.createdAt).locale("fa").format("YYYY/MM/DD HH:mm:ss")
+                ),
+                datasets: [
+                    {
+                        label: "مقدار گزارش شده",
+                        data: metrics.map((metric: any) => metric.value),
+                        borderColor: "#333",
+                        backgroundColor: "#333",
+                        tension: 0.3,
+                        borderDash: [3],
+                    },
+                ],
             });
+
+            setLoading(false);
+        });
     }, []);
 
     const goBack = () => {

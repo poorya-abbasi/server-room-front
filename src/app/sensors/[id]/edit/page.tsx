@@ -9,19 +9,18 @@ import { useEffect, useState } from "react";
 export default function EditSensor({ params }: any) {
     const [sensor, setSensor] = useState<Sensor>();
     const [loading, setLoading] = useState(true);
+    const instance = useAxios();
     const router = useRouter();
     useEffect(() => {
-        useAxios()
-            .get(`/sensors/${params.id}`)
-            .then((res) => {
-                setSensor(res.data);
-                setLoading(false);
-            });
+        instance.get(`/sensors/${params.id}`).then((res) => {
+            setSensor(res.data);
+            setLoading(false);
+        });
     }, []);
 
     const submit = async () => {
         setLoading(true);
-        await useAxios()
+        instance
             .put(`/sensors/${params.id}`, sensor)
             .then((res) => {
                 goBack();
