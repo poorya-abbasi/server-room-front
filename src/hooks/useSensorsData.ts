@@ -1,11 +1,11 @@
 import axios from "axios";
 import { ChartData } from "chart.js";
 import useAxios from "./useAxios";
-export default async function useSensorsData() {
+export default async function useSensorsData(type?: string) {
     return new Promise((resolve, reject) => {
         const instance = axios.create({ baseURL: process.env.NEXT_PUBLIC_API_URL });
         instance
-            .get("/sensors")
+            .get(`/sensors${type ? "?type=" + type : ""}`)
             .then(({ data }) => {
                 const values: number[] = [0, 0, 0];
                 const labels = ["الکتریکی", "شرایط", "رخداد"];
