@@ -30,10 +30,10 @@ export default function DefaultLayout({ children }: Props) {
     const [navigation, setNavigation] = useState([
         { name: "داشبورد", href: "/", icon: HomeIcon, current: false },
         { name: "سنسور ها", href: "/sensors", icon: AdjustmentsHorizontalIcon, current: false },
+        { name: "گزارشات", href: "/reports", icon: ChartBarIcon, current: false },
         { name: "پروژه ها", href: "#", icon: FolderIcon, current: false },
         { name: "تقویم", href: "#", icon: CalendarIcon, current: false },
         { name: "مستندات", href: "#", icon: InboxIcon, current: false },
-        { name: "گزارشات", href: "#", icon: ChartBarIcon, current: false },
     ]);
     const router = useRouter();
     const pathname = usePathname();
