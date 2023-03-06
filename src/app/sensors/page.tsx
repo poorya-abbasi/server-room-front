@@ -2,6 +2,7 @@
 
 import DataGrid from "@/components/DataGrid";
 import useSensorsData from "@/hooks/useSensorsData";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import Loading from "../loading";
 
@@ -30,10 +31,68 @@ export default function SensorsPage() {
     const applyFilter = async (value: string) => {
         if (appliedFilter === value) {
             setAppliedFilter(undefined);
-            setSensors(await useSensorsData());
+            const instance = axios.create({ baseURL: process.env.NEXT_PUBLIC_API_URL });
+            instance.get(`/sensors`).then(({ data }) => {
+                const values: number[] = [0, 0, 0];
+                const labels = ["الکتریکی", "شرایط", "رخداد"];
+                const backgroundColor = ["#F28F3B", "#333", "#aaa"];
+                data.forEach((sensor: Sensor) => {
+                    switch (sensor.type) {
+                        case "electric":
+                            values[0] += 1;
+                            break;
+                        case "condition":
+                            values[1] += 1;
+                            break;
+                        case "event":
+                            values[2] += 1;
+                            break;
+                    }
+                });
+                const full = {
+                    labels,
+                    datasets: [
+                        {
+                            label: "تعداد سنسور های آنلاین",
+                            data: values,
+                            backgroundColor,
+                        },
+                    ],
+                };
+                setSensors({ chart: full, raw: data });
+            });
         } else {
             setAppliedFilter(value);
-            setSensors(await useSensorsData(value));
+            const instance = axios.create({ baseURL: process.env.NEXT_PUBLIC_API_URL });
+            instance.get(`/sensors?type=${value}`).then(({ data }) => {
+                const values: number[] = [0, 0, 0];
+                const labels = ["الکتریکی", "شرایط", "رخداد"];
+                const backgroundColor = ["#F28F3B", "#333", "#aaa"];
+                data.forEach((sensor: Sensor) => {
+                    switch (sensor.type) {
+                        case "electric":
+                            values[0] += 1;
+                            break;
+                        case "condition":
+                            values[1] += 1;
+                            break;
+                        case "event":
+                            values[2] += 1;
+                            break;
+                    }
+                });
+                const full = {
+                    labels,
+                    datasets: [
+                        {
+                            label: "تعداد سنسور های آنلاین",
+                            data: values,
+                            backgroundColor,
+                        },
+                    ],
+                };
+                setSensors({ chart: full, raw: data });
+            });
         }
     };
 
