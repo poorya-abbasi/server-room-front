@@ -14,7 +14,7 @@ import {
     Tooltip,
     Legend,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
+import { Line, Scatter } from "react-chartjs-2";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -25,8 +25,40 @@ export default function EditSensor({ params }: any) {
     const [loading, setLoading] = useState(true);
     const instance = useAxios();
     const router = useRouter();
-    useEffect(() => {
-        instance.get(`/sensors/${params.id}`).then((res) => {
+
+    const filters = [
+        {
+            title: "هفته اخیر",
+            value: "week",
+        },
+        {
+            title: "ماه گذشته",
+            value: "month",
+        },
+        {
+            title: "۶ ماه گذشته",
+            value: "6months",
+        },
+        {
+            title: "سال گذشته",
+            value: "year",
+        },
+    ];
+
+    const [appliedFilter, setAppliedFilter] = useState<string | undefined>();
+
+    const applyFilter = async (value: string) => {
+        if (appliedFilter === value) {
+            setAppliedFilter(undefined);
+            getSensorData();
+        } else {
+            setAppliedFilter(value);
+            getSensorData(value);
+        }
+    };
+
+    const getSensorData = (filter?: string) => {
+        instance.get(`/sensors/${params.id}${filter ? "?filter=" + filter : ""}`).then((res) => {
             const sensor = res.data;
             setSensorType(sensor.type);
             setSensorName(sensor.name);
@@ -60,6 +92,10 @@ export default function EditSensor({ params }: any) {
 
             setLoading(false);
         });
+    };
+
+    useEffect(() => {
+        getSensorData();
     }, []);
 
     const goBack = () => {
@@ -71,6 +107,19 @@ export default function EditSensor({ params }: any) {
                 <Loading />
             ) : (
                 <>
+                    <div className="flex gap-2 self-start">
+                        {filters.map((item) => (
+                            <div
+                                key={item.value}
+                                className={`border border-gray-500 rounded-full py-1.5 cursor-pointer px-4 text-sm font-medium ${
+                                    appliedFilter === item.value ? "bg-gray-600 text-white" : ""
+                                }`}
+                                onClick={() => applyFilter(item.value)}
+                            >
+                                {item.title}
+                            </div>
+                        ))}
+                    </div>{" "}
                     <Line
                         options={{
                             responsive: true,
